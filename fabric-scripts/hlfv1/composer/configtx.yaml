@@ -1,0 +1,102 @@
+#
+# create zhaoliang 2017-9-19
+#
+
+---
+################################################################################
+#
+#   - 可以在这里指定不同配置配置文件
+#
+################################################################################
+Profiles:
+
+    ComposerOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            ComposerConsortium:
+                Organizations:
+                    - *Org1
+                    - *Org2
+                    - *Org3
+    ComposerChannel:
+        Consortium: ComposerConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+                - *Org3
+
+################################################################################
+#
+#   - 本节定义了不同的组织身份
+#
+################################################################################
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/example.com/msp
+        AdminPrincipal: Role.MEMBER
+
+    - &Org1
+        Name: Org1
+        ID: Org1MSP
+        MSPDir: crypto-config/peerOrganizations/org1.example.com/msp
+        AdminPrincipal: Role.MEMBER
+        AnchorPeers:
+            - Host: peer0.org1.example.com
+              Port: 7051
+
+    - &Org2
+        Name: Org2
+        ID: Org2MSP
+        MSPDir: crypto-config/peerOrganizations/org2.example.com/msp
+        AdminPrincipal: Role.MEMBER
+        AnchorPeers:
+            - Host: peer0.org2.example.com
+              Port: 7051
+
+    - &Org3
+        Name: Org3
+        ID: Org3MSP
+        MSPDir: crypto-config/peerOrganizations/org3.example.com/msp
+        AdminPrincipal: Role.MEMBER
+        AnchorPeers:
+            - Host: peer0.org3.example.com
+              Port: 7051
+
+################################################################################
+#
+#   - 本节定义的值编码到一个配置交易
+#
+################################################################################
+Orderer: &OrdererDefaults
+    OrdererType: kafka
+    Addresses:
+        - orderer0.example.com:7050
+        - orderer1.example.com:7050
+        - orderer2.example.com:7050
+    BatchTimeout: 20s
+    BatchSize:
+        MaxMessageCount: 100
+        AbsoluteMaxBytes: 98 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - kafka0:9092
+            - kafka1:9092
+            - kafka2:9092
+            - kafka3:9092
+    Organizations:
+
+################################################################################
+#
+#   - 本节定义的值编码到一个配置交易
+#
+################################################################################
+Application: &ApplicationDefaults
+    Organizations:
